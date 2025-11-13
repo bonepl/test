@@ -15,10 +15,8 @@ jobs:
       pull-requests: write
       checks: write
     steps:
-      - uses: actions/checkout@v5
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
-          fetch-depth: 0  # a full history is required for pull request analysis
+      - name: Checkout branch
+        uses: actions/checkout@v5
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2025.2
         with:
@@ -27,6 +25,7 @@ jobs:
           args: |
             --linter,qodana-jvm,
             --within-docker,false,
+            --baseline,qodana.sarif.json,
             --coverage-dir,${{ github.workspace }}/target/kover
         env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }} # read the steps about it below
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
