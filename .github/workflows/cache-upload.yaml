@@ -7,6 +7,10 @@ on:
         description: 'Cache key'
         required: true
         type: string
+      version:
+        description: 'Cache hash version'
+        required: true
+        type: string
 
 jobs:
   cache-upload:
@@ -15,14 +19,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
+      - name: Restore cache
+        uses: Andrej730/cache/restore@main
         with:
-          path: ./cache-folder
+          # Path won't be actually used, we will match by 'version'.
+          path: .
           key: ${{ github.event.inputs.cache_key }}
+          version: ${{ github.event.inputs.version }}
 
       - name: Upload cached folder as artifact
         uses: actions/upload-artifact@v4
         with:
           name: cache-artifact
-          path: ./cache-folder
+          path: |
+            /home/runner/work/**/*.tzst
